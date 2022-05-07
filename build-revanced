@@ -5,17 +5,6 @@ JAVA_11_HOME="$(readlink -f "$DIR/openjdk-11")"
 JAVA_8_HOME="$(readlink -f "$DIR/openjdk-8")"
 export ANDROID_SDK_ROOT="$(readlink -f "$DIR/android-sdk")"
 
-#CHECK gradle.properties
-if ! grep -q "gpr.user = " "$HOME/.gradle/gradle.properties"; then
-	echo "gpr.user not found in ~/.gradle/gradle.properties. Please create a token in github and add it with your username to the file"
-	exit
-fi
-
-if ! grep -q "gpr.key = " "$HOME/.gradle/gradle.properties"; then
-	echo "gpr.key not found in ~/.gradle/gradle.properties. Please create a token in github and add it with your username to the file"
-	exit
-fi
-
 if [ ! -e "$JAVA_8_HOME/bin/java" ]; then
 	if [ ! -e "openjdk-8.tar.gz" ]; then
 		echo "Donwloading openjdk-8"
