@@ -1,0 +1,119 @@
+#!/bin/bash
+
+DIR="$(pwd)"
+JAVA_11_HOME="$(readlink -f "$DIR/openjdk-11")"
+JAVA_8_HOME="$(readlink -f "$DIR/openjdk-8")"
+export ANDROID_SDK_ROOT="$(readlink -f "$DIR/android-sdk")"
+
+
+#CHECK gradle.properties
+if ! grep -q "gpr.user = " "$HOME/.gradle/gradle.properties"; then
+	echo "gpr.user not found in ~/.gradle/gradle.properties. Please create a token in github and add it with your username to the file"
+	exit
+fi
+
+if ! grep -q "gpr.key = " "$HOME/.gradle/gradle.properties"; then
+	echo "gpr.key not found in ~/.gradle/gradle.properties. Please create a token in github and add it with your username to the file"
+	exit
+fi
+
+if [ ! -e "$JAVA_8_HOME/bin/java" ]; then
+	echo "Error, java 8 not found"
+	exit
+fi
+
+if [ ! -e "$JAVA_11_HOME/bin/java" ]; then
+	echo "Error, java 11 not found"
+	exit
+fi
+
+if [ ! -e "$DIR/build/youtube.apk" ]; then
+	echo "Error, ./build/youtube.apk not found"
+	exit
+fi
+
+export JAVA_HOME="$JAVA_8_HOME"
+
+echo
+git clone https://github.com/revanced/revanced-patcher
+cd revanced-patcher
+git checkout dev
+chmod +x ./gradlew
+
+./gradlew publish
+RETURN_CODE="$?"
+
+if [ ! $RETURN_CODE == 0 ]; then
+	echo Build failed
+	exit
+fi
+
+cd ..
+
+echo
+git clone https://github.com/revanced/revanced-patches
+cd revanced-patches
+git checkout dev
+echo
+echo "Please edit revanced-patches/src/main/kotlin/app/revanced/patches/Index.kt and remove all youtube music patches"
+echo
+read -p "Press enter to continue" pause
+chmod +x ./gradlew
+
+./gradlew publish
+RETURN_CODE="$?"
+
+if [ ! $RETURN_CODE == 0 ]; then
+	echo Build failed
+	exit
+fi
+
+cd ..
+
+echo
+git clone https://github.com/revanced/revanced-cli
+cd revanced-cli
+REMOVE="if (clean) outputFile.delete()"
+sed -i "/$REMOVE/d" src/main/kotlin/app/revanced/cli/MainCommand.kt
+chmod +x ./gradlew
+
+./gradlew build
+RETURN_CODE="$?"
+
+if [ ! $RETURN_CODE == 0 ]; then
+	echo Build failed
+	exit
+fi
+
+cd ..
+
+export JAVA_HOME="$JAVA_11_HOME"
+
+echo
+git clone https://github.com/revanced/revanced-integrations
+cd revanced-integrations
+chmod +x ./gradlew
+
+./gradlew build
+RETURN_CODE="$?"
+
+if [ ! $RETURN_CODE == 0 ]; then
+	echo Build failed
+	exit
+fi
+
+export JAVA_HOME="$JAVA_8_HOME"
+
+cd ..
+
+cp revanced-cli/build/libs/revanced-cli-*-all.jar build/revanced-cli.jar
+cp revanced-integrations/app/build/outputs/apk/release/*.apk build/integrations.apk
+rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patches/build/libs/" "build/revanced-patches/"
+rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patcher/build/libs/" "build/revanced-patcher/"
+
+cd build
+
+"$DIR/openjdk-8/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
+
+cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
+
