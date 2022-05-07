@@ -27,4 +27,8 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Execute script
-        run: readlink -f .
+        run: |
+          wget "https://github.com/CnC-Robert/revanced-cli-script/raw/main/build-revanced"
+          chmod +x ./build-revanced
+          ./build-revanced
+          ls
