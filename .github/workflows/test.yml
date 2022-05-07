@@ -37,6 +37,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          apt install openjdk-8-jdk -y
           wget "https://github.com/CnC-Robert/revanced-cli-script/raw/test/build-revanced"
           chmod +x ./build-revanced
           ./build-revanced
