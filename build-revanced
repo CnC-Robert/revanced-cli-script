@@ -36,7 +36,7 @@ fi
 
 if [ ! -e "$DIR/build/youtube.apk" ]; then
 	echo "Error, ./build/youtube.apk not found"
-	exit
+	exit 1
 fi
 
 export JAVA_HOME="$JAVA_8_HOME"
@@ -52,7 +52,7 @@ RETURN_CODE="$?"
 
 if [ ! $RETURN_CODE == 0 ]; then
 	echo Build failed
-	exit
+	exit 1
 fi
 
 cd ..
@@ -68,7 +68,7 @@ RETURN_CODE="$?"
 
 if [ ! $RETURN_CODE == 0 ]; then
 	echo Build failed
-	exit
+	exit 1
 fi
 
 cd ..
@@ -85,7 +85,7 @@ RETURN_CODE="$?"
 
 if [ ! $RETURN_CODE == 0 ]; then
 	echo Build failed
-	exit
+	exit 1
 fi
 
 cd ..
@@ -102,7 +102,7 @@ RETURN_CODE="$?"
 
 if [ ! $RETURN_CODE == 0 ]; then
 	echo Build failed
-	exit
+	exit 1
 fi
 
 export JAVA_HOME="$JAVA_8_HOME"
@@ -119,3 +119,5 @@ cd build
 "$DIR/openjdk-8/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
+
+exit 0
