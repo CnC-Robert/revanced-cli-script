@@ -39,7 +39,7 @@ if [ ! -e "$DIR/build/youtube.apk" ]; then
 	exit 1
 fi
 
-#export JAVA_HOME="$JAVA_8_HOME"
+export JAVA_HOME="$JAVA_8_HOME"
 
 echo
 git clone https://github.com/revanced/revanced-patcher
