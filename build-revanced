@@ -18,12 +18,12 @@ if ! grep -q "gpr.key = " "$HOME/.gradle/gradle.properties"; then
 fi
 
 if [ ! -e "$JAVA_8_HOME/bin/java" ]; then
-	echo "Error, java 8 not found"
+	echo "Error, ./openjdk-8/bin/java not found"
 	exit
 fi
 
 if [ ! -e "$JAVA_11_HOME/bin/java" ]; then
-	echo "Error, java 11 not found"
+	echo "Error, ./openjdk-11/bin/java not found"
 	exit
 fi
 
