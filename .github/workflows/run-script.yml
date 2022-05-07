@@ -24,7 +24,19 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v3
-
+      
+      - name: Download YouTube apk
+        run: |
+          mkdir "build"
+          cd "build"
+          wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt/youtube.apk"
+          cd ..
+      
       # Runs a single command using the runners shell
       - name: Execute script
-        run: ls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          wget "https://github.com/CnC-Robert/revanced-cli-script/raw/main/build-revanced"
+          chmod +x ./build-revanced
+          ./build-revanced
