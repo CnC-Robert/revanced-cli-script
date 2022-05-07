@@ -54,10 +54,6 @@ echo
 git clone https://github.com/revanced/revanced-patches
 cd revanced-patches
 git checkout dev
-echo
-echo "Please edit revanced-patches/src/main/kotlin/app/revanced/patches/Index.kt and remove all youtube music patches"
-echo
-read -p "Press enter to continue" pause
 chmod +x ./gradlew
 
 ./gradlew publish
@@ -116,4 +112,3 @@ cd build
 "$DIR/openjdk-8/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
-
