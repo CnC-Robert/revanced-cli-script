@@ -25,6 +25,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       #- uses: actions/checkout@v3
 
+      - name: Get YouTube apk
+        run: |
+          mkdir build
+          cd build
+          wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt/youtube.apk"
+          cd ..
+
       # Runs a single command using the runners shell
       - name: Execute script
         env:
