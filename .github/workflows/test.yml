@@ -27,8 +27,11 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Execute script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           wget "https://github.com/CnC-Robert/revanced-cli-script/raw/main/build-revanced"
           chmod +x ./build-revanced
           ./build-revanced
           ls
+        
