@@ -22,9 +22,12 @@ jobs:
           distribution: 'adopt'
           java-version: '8'
       
-      - name: Test
-        run: echo ${{ secrets.GITHUB_TOKEN }}
-      
+      - name: gradle.properties
+        run: |
+          mkdir "$HOME/.gradle"
+          printf "gpr.user = runner\ngpr.key = ${{ secrets.GITHUB_TOKEN }}" > "$HOME/.gradle/gradle.properties"
+          cat "$HOME/.gradle/gradle.properties"
+
       - name: Download YouTube apk
         run: |
           mkdir "build"
