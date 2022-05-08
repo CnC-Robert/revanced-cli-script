@@ -95,9 +95,9 @@ export JAVA_HOME="$JAVA_11_HOME"
 echo
 git clone https://github.com/revanced/revanced-integrations
 cd revanced-integrations
-chmod +x ./gradlew
+chmod +x ./gradlew.sh
 
-./gradlew build
+./gradlew.sh build
 RETURN_CODE="$?"
 
 if [ ! $RETURN_CODE == 0 ]; then
