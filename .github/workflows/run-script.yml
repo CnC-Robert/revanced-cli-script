@@ -20,16 +20,17 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: '8'
+          java-version: '17'
       
-      - name: gradle.properties
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir "$HOME/.gradle"
-          printf "gpr.user = runner\ngpr.key = $GITHUB_TOKEN" > "$HOME/.gradle/gradle.properties"
-          cat "$HOME/.gradle/gradle.properties"
+#      - name: gradle.properties
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          mkdir "$HOME/.gradle"
+#          printf "gpr.user = runner\ngpr.key = $GITHUB_TOKEN" > "$HOME/.gradle/gradle.properties"
+#          cat "$HOME/.gradle/gradle.properties"
 
+        # Get youtube apk and place it in build folder
       - name: Download YouTube apk
         run: |
           mkdir "build"
@@ -37,7 +38,7 @@ jobs:
           wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt/youtube.apk"
           cd ..
       
-      # Runs a single command using the runners shell
+      # Run script
       - name: Execute script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
