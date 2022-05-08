@@ -1,27 +1,31 @@
 #!/bin/bash
 
 DIR="$(pwd)"
-export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
-export ANDROID_SDK_ROOT="$(readlink -f "$DIR/android-sdk")"
 
-if [ ! -e "$JAVA_HOME/bin/java" ]; then
-	if [ ! -e "openjdk.tar.gz" ]; then
-		echo "Donwloading openjdk..."
-		wget "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
+if [ ! -e "$(which java)" ] && [ -z "$JAVA_HOME" ]; then
+	export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
+	if [ ! -e "$JAVA_HOME/bin/java" ]; then
+		if [ ! -e "openjdk.tar.gz" ]; then
+			echo "Donwloading openjdk..."
+			wget "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
+		fi
+		echo "Extracting openjdk..."
+		tar xzf "openjdk.tar.gz"
+		mv jdk-* "openjdk"
 	fi
-	echo "Extracting openjdk..."
-	tar xzf "openjdk.tar.gz"
-	mv jdk-* "openjdk"
 fi
 
-if [ ! -e "$ANDROID_SDK_ROOT" ]; then
-	if [ ! -e "android-sdk.tar.gz" ]; then
-		echo "Donwloading Android SDK"
-		echo
-		wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java-androidsdk/android-sdk.tar.gz"
+if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
+	export ANDROID_HOME="$(readlink -f "$DIR/android-sdk")"
+	if [ ! -e "$ANDROID_HOME" ]; then
+		if [ ! -e "android-sdk.tar.gz" ]; then
+			echo "Donwloading Android SDK"
+			echo
+			wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java-androidsdk/android-sdk.tar.gz"
+		fi
+		echo "Extracting android-sdk.tar.gz"
+		tar xzf "android-sdk.tar.gz"
 	fi
-	echo "Extracting android-sdk.tar.gz"
-	tar xzf "android-sdk.tar.gz"
 fi
 
 if [ ! -e "$DIR/build/youtube.apk" ]; then
@@ -38,6 +42,7 @@ if [ ! -e "$(which git)" ]; then
 	echo "Error, git not found"
 	exit 1
 fi
+
 
 echo
 git clone https://github.com/revanced/revanced-patcher
@@ -111,7 +116,11 @@ rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patcher/
 
 cd build
 
-"$JAVA_HOME/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
+if [ ! -z "$JAVA_HOME" ]; then
+	"$JAVA_HOME/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
+else
+	java -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp	
+fi
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
