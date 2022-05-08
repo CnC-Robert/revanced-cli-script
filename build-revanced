@@ -5,6 +5,15 @@ JAVA_11_HOME="$(readlink -f "$DIR/openjdk-11")"
 JAVA_8_HOME="$(readlink -f "$DIR/openjdk-8")"
 export ANDROID_SDK_ROOT="$(readlink -f "$DIR/android-sdk")"
 
+if [ ! -e "$JAVA_8_HOME/bin/java" ]; then
+	if [ ! -e "openjdk-8.tar.gz" ]; then
+		echo "Donwloading openjdk-8"
+		wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java%2Bandroidsdk/openjdk-8.tar.gz"
+	fi
+	echo "Extracting openjdk-8.tar.gz"
+	tar xzf "openjdk-8.tar.gz"
+fi
+
 if [ ! -e "$JAVA_11_HOME/bin/java" ]; then
 	if [ ! -e "openjdk-11.tar.gz" ]; then
 		echo "Donwloading openjdk-11"
@@ -96,7 +105,7 @@ if [ ! $RETURN_CODE == 0 ]; then
 	exit 1
 fi
 
-#export JAVA_HOME="$JAVA_8_HOME"
+export JAVA_HOME="$JAVA_8_HOME"
 
 cd ..
 
