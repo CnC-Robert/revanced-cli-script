@@ -10,10 +10,13 @@ Copy the revanced.apk to your phone (Not to /sdcard or /storage/emulated/0) and 
 Copy the lines below to mount the apk (in adb root or termux root)
 
 base_path="/data/revanced.apk"
+
 stock_path=${ pm path com.google.android.youtube | grep base | sed 's/package://g' }
 
 chmod 644 $base_path
+
 chown system:system $base_path
+
 chcon u:object_r:apk_data_file:s0  $base_path
 
 mount -o bind $base_path $stock_path
