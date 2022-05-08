@@ -6,7 +6,7 @@ You need to have git installed and have a username & token set in ~/.gradle/grad
 Java & Android SDK will be downloaded automaticlly to the script directory.
 
 # Mounting the apk
-Copy the revanced.apk to your phone (Not in /sdcard or /storage/emulated/0) and set the base path to the location of the apk
+Copy the revanced.apk to your phone (Not in /sdcard or /storage/emulated/0) and set the $base_path below to the location of the apk.
 Copy the lines below to mount the apk (in adb root or termux root)
 
 base_path="/data/revanced.apk"
