@@ -25,10 +25,9 @@ jobs:
       - name: gradle.properties
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_USERNAME: ${{ GITHUB_ACTOR }}
         run: |
           mkdir "$HOME/.gradle"
-          printf "gpr.user = $GITHUB_USERNAME\ngpr.key = $GITHUB_TOKEN" > "$HOME/.gradle/gradle.properties"
+          printf "gpr.user = runner\ngpr.key = $GITHUB_TOKEN" > "$HOME/.gradle/gradle.properties"
           cat "$HOME/gradle.properties"
 
         # Get youtube apk and place it in build folder
