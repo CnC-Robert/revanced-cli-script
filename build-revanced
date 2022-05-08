@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export GITHUB_TOKEN="$GITHUB_TOKEN"
+
+echo "$GITHUB_TOKEN"
+
 DIR="$(pwd)"
 
 if [ ! -e "$(which java)" ] && [ -z "$JAVA_HOME" ]; then
