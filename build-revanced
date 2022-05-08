@@ -1,27 +1,17 @@
 #!/bin/bash
 
 DIR="$(pwd)"
-JAVA_11_HOME="$(readlink -f "$DIR/openjdk-11")"
-JAVA_8_HOME="$(readlink -f "$DIR/openjdk-8")"
+export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
 export ANDROID_SDK_ROOT="$(readlink -f "$DIR/android-sdk")"
 
-if [ ! -e "$JAVA_8_HOME/bin/java" ]; then
-	if [ ! -e "openjdk-8.tar.gz" ]; then
-		echo "Donwloading openjdk-8"
-		wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java-androidsdk/openjdk-8.tar.gz"
+if [ ! -e "$JAVA_HOME/bin/java" ]; then
+	if [ ! -e "openjdk.tar.gz" ]; then
+		echo "Donwloading openjdk..."
+		wget "https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
 	fi
-	echo "Extracting openjdk-8.tar.gz"
-	tar xzf "openjdk-8.tar.gz"
-fi
-
-if [ ! -e "$JAVA_11_HOME/bin/java" ]; then
-	if [ ! -e "openjdk-11.tar.gz" ]; then
-		echo "Donwloading openjdk-11"
-		echo
-		wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java-androidsdk/openjdk-11.tar.gz"
-	fi
-	echo "Extracting openjdk-11.tar.gz"
-	tar xzf "openjdk-11.tar.gz"
+	echo "Extracting openjdk..."
+	tar xzf "openjdk.tar.gz"
+	mv jdk-* "openjdk"
 fi
 
 if [ ! -e "$ANDROID_SDK_ROOT" ]; then
@@ -39,7 +29,15 @@ if [ ! -e "$DIR/build/youtube.apk" ]; then
 	exit 1
 fi
 
-export JAVA_HOME="$JAVA_8_HOME"
+if [ ! -e "$(which wget)" ]; then
+	echo "Error, wget not found"
+	exit 1
+fi
+
+if [ ! -e "$(which git)" ]; then
+	echo "Error, git not found"
+	exit 1
+fi
 
 echo
 git clone https://github.com/revanced/revanced-patcher
@@ -91,8 +89,6 @@ fi
 
 cd ..
 
-export JAVA_HOME="$JAVA_11_HOME"
-
 echo
 git clone https://github.com/revanced/revanced-integrations
 cd revanced-integrations
@@ -106,8 +102,6 @@ if [ ! $RETURN_CODE == 0 ]; then
 	exit 1
 fi
 
-export JAVA_HOME="$JAVA_8_HOME"
-
 cd ..
 
 cp revanced-cli/build/libs/revanced-cli-*-all.jar build/revanced-cli.jar
@@ -117,7 +111,7 @@ rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patcher/
 
 cd build
 
-"$DIR/openjdk-8/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
+"$JAVA_HOME/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
