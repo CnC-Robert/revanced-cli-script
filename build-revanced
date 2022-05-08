@@ -8,7 +8,7 @@ export ANDROID_SDK_ROOT="$(readlink -f "$DIR/android-sdk")"
 if [ ! -e "$JAVA_8_HOME/bin/java" ]; then
 	if [ ! -e "openjdk-8.tar.gz" ]; then
 		echo "Donwloading openjdk-8"
-		wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java%2Bandroidsdk/openjdk-8.tar.gz"
+		wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java-androidsdk/openjdk-8.tar.gz"
 	fi
 	echo "Extracting openjdk-8.tar.gz"
 	tar xzf "openjdk-8.tar.gz"
