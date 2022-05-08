@@ -9,7 +9,7 @@ Java & Android SDK will be downloaded automaticlly to the script directory.
 Copy the revanced.apk to your phone (Not to /sdcard or /storage/emulated/0) and set the $base_path below to the location of the apk.
 Copy the lines below to mount the apk (in adb root or termux root)
 
-export base_path="/data/revanced.apk"
+export base_path="/data/revanced/revanced.apk"
 
 export stock_path=${ pm path com.google.android.youtube | grep base | sed 's/package://g' }
 
