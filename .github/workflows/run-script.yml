@@ -28,8 +28,8 @@ jobs:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
         run: |
           mkdir "$HOME/.gradle"
-          echo ${GRADLE_PROPERTIES} > "$HOME/.gradle/gradle.properties"
-          cat "$HOME/.gradle/gradle.properties"
+          echo ${GRADLE_PROPERTIES} > "$HOME/gradle.properties"
+          cat "$HOME/gradle.properties"
 
         # Get youtube apk and place it in build folder
       - name: Download YouTube apk
