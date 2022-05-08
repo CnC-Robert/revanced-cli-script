@@ -76,6 +76,7 @@ cd ..
 echo
 git clone https://github.com/revanced/revanced-cli
 cd revanced-cli
+git checkout dev
 REMOVE="if (clean) outputFile.delete()"
 sed -i "/$REMOVE/d" src/main/kotlin/app/revanced/cli/MainCommand.kt
 chmod +x ./gradlew
