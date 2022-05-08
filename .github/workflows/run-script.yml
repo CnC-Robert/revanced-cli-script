@@ -22,13 +22,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       
-#      - name: gradle.properties
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: |
-#          mkdir "$HOME/.gradle"
-#          printf "gpr.user = runner\ngpr.key = $GITHUB_TOKEN" > "$HOME/.gradle/gradle.properties"
-#          cat "$HOME/.gradle/gradle.properties"
+      - name: gradle.properties
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+        run: |
+          mkdir "$HOME/.gradle"
+          echo ${GRADLE_PROPERTIES} > "$HOME/.gradle/gradle.properties"
+          cat "$HOME/.gradle/gradle.properties"
 
         # Get youtube apk and place it in build folder
       - name: Download YouTube apk
