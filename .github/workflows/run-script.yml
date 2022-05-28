@@ -36,5 +36,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x ./build-from-source.sh
-          export LOCALMAVEN="1"
           ./build-from-source.sh
