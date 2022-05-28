@@ -78,8 +78,6 @@ echo
 git clone https://github.com/revanced/revanced-cli
 cd revanced-cli
 git checkout dev
-REMOVE="if (clean) outputFile.delete()"
-sed -i "/$REMOVE/d" src/main/kotlin/app/revanced/cli/MainCommand.kt
 chmod +x ./gradlew
 
 ./gradlew build
@@ -113,9 +111,9 @@ rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patcher/
 cd build
 
 if [ ! -z "$JAVA_HOME" ]; then
-	"$JAVA_HOME/bin/java" -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
+	"$JAVA_HOME/bin/java" -jar revanced-cli.jar -a youtube.apk -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
 else
-	java -jar revanced-cli.jar -a youtube.apk -c cache -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp	
+	java -jar revanced-cli.jar -a youtube.apk -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp	
 fi
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
