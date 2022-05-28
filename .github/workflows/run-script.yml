@@ -35,6 +35,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          wget "https://github.com/CnC-Robert/revanced-cli-script/raw/main/build-revanced"
+          wget "https://github.com/CnC-Robert/revanced-cli-script/raw/main/build-from-source.sh"
           chmod +x ./build-revanced
           ./build-revanced
