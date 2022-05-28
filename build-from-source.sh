@@ -32,12 +32,13 @@ if [ ! -e "$DIR/build/youtube.apk" ]; then
 	exit 1
 fi
 
-if ! command -v "wget"; then
+# Check if wget & git are installed before continuing
+if ! command -v "wget" &> "/dev/null"; then
 	echo "Error, wget not found"
 	exit 1
 fi
 
-if ! command -v "git"; then
+if ! command -v "git" &> "/dev/null"; then
 	echo "Error, git not found"
 	exit 1
 fi
