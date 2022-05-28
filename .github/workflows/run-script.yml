@@ -35,7 +35,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ls
-          wget "https://github.com/CnC-Robert/revanced-cli-script/raw/main/build-from-source.sh"
           chmod +x ./build-from-source.sh
           ./build-from-source.sh
