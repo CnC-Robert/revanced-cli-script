@@ -49,7 +49,7 @@ cd revanced-patcher
 git checkout dev
 chmod +x ./gradlew
 
-./gradlew publish
+./gradlew $(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)
 
 if [ ! $? == 0 ]; then
 	echo Build failed
@@ -64,7 +64,7 @@ cd revanced-patches
 git checkout dev
 chmod +x ./gradlew
 
-./gradlew publish
+./gradlew $(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)
 
 if [ ! $? == 0 ]; then
 	echo Build failed
