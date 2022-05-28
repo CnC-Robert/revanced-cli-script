@@ -105,8 +105,8 @@ cd ..
 
 cp revanced-cli/build/libs/revanced-cli-*-all.jar build/revanced-cli.jar
 cp revanced-integrations/app/build/outputs/apk/release/*.apk build/integrations.apk
-rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patches/build/libs/" "build/revanced-patches/"
-rsync -av --exclude="*-javadoc.jar" --exclude="*-sources.jar" "revanced-patcher/build/libs/" "build/revanced-patcher/"
+for file in $DIR/revanced-patches/build/libs/*.jar; do cp "$file" "$DIR/build/revanced-patches.jar"; break; done 
+for file in $DIR/revanced-patcher/build/libs/*.jar; do cp "$file" "$DIR/build/revanced-patcher.jar"; break; done
 
 cd build
 
