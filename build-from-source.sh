@@ -111,9 +111,9 @@ for file in $DIR/revanced-patcher/build/libs/*.jar; do cp "$file" "$DIR/build/re
 cd build
 
 if [ ! -z "$JAVA_HOME" ]; then
-	"$JAVA_HOME/bin/java" -jar revanced-cli.jar -a youtube.apk -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp
+	"$JAVA_HOME/bin/java" -jar "revanced-cli.jar" -a "youtube.apk" -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
 else
-	java -jar revanced-cli.jar -a youtube.apk -m integrations.apk -o revanced.apk -p revanced-patches/revanced-patches*.jar -r -t temp	
+	java -jar "revanced-cli.jar" -a "youtube.apk" -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
 fi
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
