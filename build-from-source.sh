@@ -51,9 +51,8 @@ git checkout dev
 chmod +x ./gradlew
 
 ./gradlew publish
-RETURN_CODE="$?"
 
-if [ ! $RETURN_CODE == 0 ]; then
+if [ ! $? == 0 ]; then
 	echo Build failed
 	exit 1
 fi
@@ -67,9 +66,8 @@ git checkout dev
 chmod +x ./gradlew
 
 ./gradlew publish
-RETURN_CODE="$?"
 
-if [ ! $RETURN_CODE == 0 ]; then
+if [ ! $? == 0 ]; then
 	echo Build failed
 	exit 1
 fi
@@ -85,9 +83,8 @@ sed -i "/$REMOVE/d" src/main/kotlin/app/revanced/cli/MainCommand.kt
 chmod +x ./gradlew
 
 ./gradlew build
-RETURN_CODE="$?"
 
-if [ ! $RETURN_CODE == 0 ]; then
+if [ ! $? == 0 ]; then
 	echo Build failed
 	exit 1
 fi
@@ -97,12 +94,11 @@ cd ..
 echo
 git clone https://github.com/revanced/revanced-integrations
 cd revanced-integrations
-chmod +x ./gradlew.sh
+chmod +x ./gradlew
 
-./gradlew.sh build
-RETURN_CODE="$?"
+./gradlew build
 
-if [ ! $RETURN_CODE == 0 ]; then
+if [ ! $? == 0 ]; then
 	echo Build failed
 	exit 1
 fi
