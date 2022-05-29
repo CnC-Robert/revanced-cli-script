@@ -15,8 +15,9 @@ if [ ! -e "$(which java)" ] && [ -z "$JAVA_HOME" ]; then
 	export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
 	if [ ! -e "$JAVA_HOME/bin/java" ]; then
 		if [ ! -e "openjdk.tar.gz" ]; then
+			echo
 			echo "Downloading openjdk..."
-			wget "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
+			wget -q "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
 		fi
 		echo "Extracting openjdk..."
 		tar xzf "openjdk.tar.gz"
@@ -29,8 +30,9 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
 	export ANDROID_HOME="$(readlink -f "$DIR/android-sdk")"
 	if [ ! -e "$ANDROID_HOME" ]; then
 		if [ ! -e "android-sdk.tar.gz" ]; then
+			echo
 			echo "Downloading Android SDK"
-			wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/androidsdk/android-sdk.tar.gz"
+			wget -q "https://github.com/CnC-Robert/revanced-cli-script/releases/download/androidsdk/android-sdk.tar.gz"
 		fi
 		echo "Extracting android-sdk.tar.gz"
 		tar xzf "android-sdk.tar.gz"
