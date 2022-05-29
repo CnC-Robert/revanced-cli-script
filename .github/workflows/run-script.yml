@@ -14,15 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      
-      #This is only necessary for the workflow
+    
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
  
-        # Get youtube apk and place it in build folder
       - name: Download YouTube apk
         run: |
           mkdir "build"
@@ -30,12 +28,11 @@ jobs:
           wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt/youtube.apk"
           cd ..
       
-      # Run script
       - name: Execute script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-          # Also works without $LOCALMAVEN=1
+          # Script also works without $LOCALMAVEN=1
           LOCALMAVEN: 1
         run: |
           chmod +x ./build-from-source.sh
