@@ -6,7 +6,7 @@ You need to have git & wget installed and have a username & token set in ~/.grad
 Java & Android SDK will be downloaded automaticlly if it is not installed already.
 
 # Usage
-Place the youtube apk in a folder named build like this: `script-dir/build/youtube.apk` and execute the script `./build-from-source.sh (adb device name (optional))`
+Place the youtube apk in a folder named build like this: `script-dir/build/youtube.apk` and execute the script `./build-from-source.sh "adb device name (optional)"`
 
 # Mounting the apk
 
