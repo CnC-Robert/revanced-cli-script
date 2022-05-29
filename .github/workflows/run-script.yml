@@ -2,10 +2,10 @@
 name: Run Script
 
 on:
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
   workflow_dispatch:
 
@@ -34,7 +34,10 @@ jobs:
       - name: Execute script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Also works without $LOCALMAVEN=1
           LOCALMAVEN: 1
         run: |
           chmod +x ./build-from-source.sh
           ./build-from-source.sh
+          ls
