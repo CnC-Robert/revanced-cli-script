@@ -104,7 +104,7 @@ else
 	JAVA="$JAVA_HOME/bin/java"
 fi
 
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -e "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
