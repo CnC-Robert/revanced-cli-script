@@ -30,7 +30,7 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
 	if [ ! -e "$ANDROID_HOME" ]; then
 		if [ ! -e "android-sdk.tar.gz" ]; then
 			echo "Downloading Android SDK"
-			wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/java-androidsdk/android-sdk.tar.gz"
+			wget "https://github.com/CnC-Robert/revanced-cli-script/releases/download/androidsdk/android-sdk.tar.gz"
 		fi
 		echo "Extracting android-sdk.tar.gz"
 		tar xzf "android-sdk.tar.gz"
