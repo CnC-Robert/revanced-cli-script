@@ -52,10 +52,7 @@ chmod +x ./gradlew
 
 ./gradlew $(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)
 
-if [ ! $? == 0 ]; then
-	echo Build failed
-	exit 1
-fi
+if [ ! $? == 0 ]; then exit 1; fi
 
 cd ..
 
@@ -67,10 +64,7 @@ chmod +x ./gradlew
 
 ./gradlew $(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)
 
-if [ ! $? == 0 ]; then
-	echo Build failed
-	exit 1
-fi
+if [ ! $? == 0 ]; then exit 1; fi
 
 cd ..
 
@@ -82,10 +76,7 @@ chmod +x ./gradlew
 
 ./gradlew build
 
-if [ ! $? == 0 ]; then
-	echo Build failed
-	exit 1
-fi
+if [ ! $? == 0 ]; then exit 1; fi
 
 cd ..
 
@@ -96,10 +87,7 @@ chmod +x ./gradlew
 
 ./gradlew build
 
-if [ ! $? == 0 ]; then
-	echo Build failed
-	exit 1
-fi
+if [ ! $? == 0 ]; then exit 1; fi
 
 cd ..
 
@@ -110,11 +98,13 @@ for file in $DIR/revanced-patcher/build/libs/*.jar; do cp "$file" "$DIR/build/re
 
 cd build
 
-if [ ! -z "$JAVA_HOME" ]; then
-	"$JAVA_HOME/bin/java" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -e "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
+if [ -z "$JAVA_HOME" ]; then
+	JAVA="java"
 else
-	java -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -e "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
+	JAVA="$JAVA_HOME/bin/java"
 fi
+
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -e "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
