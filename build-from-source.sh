@@ -2,12 +2,32 @@
 
 DIR="$(pwd)"
 
+# Check if wget & git are installed before continuing
+if ! command -v "wget" &> "/dev/null"; then
+	echo -e "\e[1;31mError, wget not found\e[0m"
+	exit 1
+fi
+
+if ! command -v "git" &> "/dev/null"; then
+	echo -e "\e[1;31mError, git not found\e[0m"
+	exit 1
+fi
+
+# Check if a youtube.apk is provided before continuing
+if [ ! -e "$DIR/build/youtube.apk" ]; then
+	echo -e "\e[1;31mError, ./build/youtube.apk not found\e[0m"
+	exit 1
+fi
+
 # Check if adb device is connected before continuing
 if [ ! -z "$1" ]; then
-	if ! adb devices | grep "$1" &> /dev/null; then
-		echo "Error, device $1 not connected"
+	if ! adb devices | grep "$1" &> "/dev/null"; then
+		echo -e "\e[1;31mError, device $1 not connected\e[0m"
 		exit 1
 	fi
+else
+	echo
+	echo -e "\e[1;33mWarning, no adb device specified. It is recommended to do so to automatically install the apk\e[0m"
 fi
 
 # Check if java is installed and if not, download and extract openjdk 17
@@ -37,23 +57,6 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
 		echo "Extracting android-sdk.tar.gz"
 		tar xzf "android-sdk.tar.gz"
 	fi
-fi
-
-# Check if a youtube.apk is provided before continuing
-if [ ! -e "$DIR/build/youtube.apk" ]; then
-	echo "Error, ./build/youtube.apk not found"
-	exit 1
-fi
-
-# Check if wget & git are installed before continuing
-if ! command -v "wget" &> "/dev/null"; then
-	echo "Error, wget not found"
-	exit 1
-fi
-
-if ! command -v "git" &> "/dev/null"; then
-	echo "Error, git not found"
-	exit 1
 fi
 
 echo
