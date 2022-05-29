@@ -2,6 +2,14 @@
 
 DIR="$(pwd)"
 
+# Check if adb device is connected before continuing
+if [ ! -z "$1" ]; then
+	if ! adb devices | grep "$1" &> /dev/null; then
+		echo "Error, device $1 not connected"
+		exit 1
+	fi
+fi
+
 # Check if java is installed and if not, download and extract openjdk 17
 if [ ! -e "$(which java)" ] && [ -z "$JAVA_HOME" ]; then
 	export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
@@ -113,7 +121,7 @@ for file in $DIR/revanced-patcher/build/libs/*.jar; do cp "$file" "$DIR/build/re
 
 cd build
 
-# Get the correct java executable
+# Set the correct java executable
 if [ -z "$JAVA_HOME" ]; then
 	JAVA="java"
 else
