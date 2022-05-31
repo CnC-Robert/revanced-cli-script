@@ -31,7 +31,7 @@ else
 fi
 
 # Check if java is installed and if not, download and extract openjdk 17
-if [ ! -e "$(which java)" ] && [ -z "$JAVA_HOME" ]; then
+if ! command -v "java" && [ -z "$JAVA_HOME" ]; then
 	export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
 	if [ ! -e "$JAVA_HOME/bin/java" ]; then
 		if [ ! -e "openjdk.tar.gz" ]; then
