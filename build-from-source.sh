@@ -120,18 +120,9 @@ cd ..
 cp revanced-cli/build/libs/revanced-cli-*-all.jar build/revanced-cli.jar
 cp revanced-integrations/app/build/outputs/apk/release/*.apk build/integrations.apk
 
-# Check every jar file and copy it if it doesn't end in -javadoc.jar or -sources.jar
-for FILE in $DIR/revanced-patches/build/libs/*.jar; do
-	if [[ "$FILE" != *"-sources.jar" && "$FILE" != *"-javadoc.jar" ]]; then
-		cp "$FILE" "$DIR/build/revanced-patches.jar"
-	fi
-done
-
-for FILE in $DIR/revanced-patcher/build/libs/*.jar; do
-	if [[ "$FILE" != *"-sources.jar" && "$FILE" != *"-javadoc.jar" ]]; then
-		cp "$FILE" "$DIR/build/revanced-patcher.jar"
-	fi
-done
+# The cli doesn't need the files that end -sources.jar or -javadoc.jar so don't copy those 
+cp "$DIR/revanced-patches/build/libs/$(ls "$DIR/revanced-patches/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patches.jar"
+cp "$DIR/revanced-patcher/build/libs/$(ls "$DIR/revanced-patcher/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patcher.jar"
 
 cd build
 
