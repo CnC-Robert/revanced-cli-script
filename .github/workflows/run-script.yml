@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-from-source.sh:
+  build-from-source:
     runs-on: ubuntu-latest
 
     steps:
@@ -43,7 +43,7 @@ jobs:
           ./build-from-source.sh
           ls
 
-  build-from-prebuilt.sh:
+  build-from-prebuilt:
     runs-on: ubuntu-latest
 
     steps:
