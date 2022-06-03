@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  revanced-cli-script:
+  build-from-source.sh:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,4 +41,30 @@ jobs:
         run: |
           chmod +x ./build-from-source.sh
           ./build-from-source.sh
+          ls
+
+  build-from-prebuilt.sh:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+ 
+      - name: Download YouTube apk
+        run: |
+          mkdir "build"
+          cd "build"
+          wget -q "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt-17.19.36/youtube.apk"
+          cd ..
+      
+      - name: Execute script
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x ./build-from-prebuilt.sh
+          ./build-from-prebuilt.sh
           ls
