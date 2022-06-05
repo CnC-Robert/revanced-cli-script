@@ -2,9 +2,9 @@
 
 DIR="$(pwd)"
 
-# Check if $TOKEN is set
-if [ -z "$TOKEN" ]; then
-	echo -e "\e[1;31mError, \$TOKEN not set\e[0m"
+# Check if $GITHUB_TOKEN is set
+if [ -z "$GITHUB_TOKEN" ]; then
+	echo -e "\e[1;31mError, \$GITHUB_TOKEN not set\e[0m"
 	exit 1
 fi
 
@@ -48,16 +48,36 @@ fi
 
 echo
 
-curl https://maven.pkg.github.com/revanced/revanced-cli/app/revanced/revanced-cli/1.1.6-dev.1/revanced-cli-1.1.6-dev.1-all.jar -s -H "Authorization: Bearer $TOKEN" -L -o "$DIR/build/revanced-cli.jar"
+# Get latest cli version
+CLI_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-cli/releases/latest | grep "tag_name")"
+CLI_VERSION="${CLI_VERSION:16:-2}"
+
+# Download cli and check if it downloaded correctly
+curl "https://maven.pkg.github.com/revanced/revanced-cli/app/revanced/revanced-cli/$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-cli.jar"
 if [ ! $? == 0 ]; then exit 1; fi
 
-curl https://github.com/revanced/revanced-integrations/releases/download/v0.1.0/app-release-unsigned.apk -s -L -o "$DIR/build/integrations.apk"
+# Get latest integrations version
+INTEGRATIONS_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-integrations/releases/latest | grep "tag_name")"
+INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:15:-2}"
+
+# Download integrations and check if it downloaded correctly
+curl "https://github.com/revanced/revanced-integrations/releases/download/$INTEGRATIONS_VERSION/app-release-unsigned.apk" -s -L -o "$DIR/build/integrations.apk"
 if [ ! $? == 0 ]; then exit 1; fi
 
-curl https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/1.0.0-dev.13/revanced-patches-1.0.0-dev.13.jar -s -H "Authorization: Bearer $TOKEN" -L -o "$DIR/build/revanced-patches.jar"
+# Get latest patches version
+PATCHES_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-patches/releases/latest | grep "tag_name")"
+PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
+
+# Download patches and check if it downloaded correctly
+curl "https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patches.jar"
 if [ ! $? == 0 ]; then exit 1; fi
 
-curl https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patcher/1.0.0-dev.17/revanced-patcher-1.0.0-dev.17.jar -s -H "Authorization: Bearer $TOKEN" -L -o "$DIR/build/revanced-patcher.jar"
+# Get latest patcher version
+PATCHER_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-patcher/releases/latest | grep "tag_name")"
+PATCHER_VERSION="${PATCHER_VERSION:16:-2}"
+
+# Download patcher and check if it downloaded correctly
+curl "https://maven.pkg.github.com/revanced/revanced-patcher/app/revanced/revanced-patcher/$PATCHER_VERSION/revanced-patcher-$PATCHER_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patcher.jar"
 if [ ! $? == 0 ]; then exit 1; fi
 
 cd "$DIR/build"
@@ -70,9 +90,8 @@ else
 fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp"
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -r -t "temp"
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
 exit 0
-
