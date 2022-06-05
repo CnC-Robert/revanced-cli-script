@@ -2,9 +2,9 @@
 
 DIR="$(pwd)"
 
-# Check if wget & git are installed before continuing
-if ! command -v "wget" &> "/dev/null"; then
-	echo -e "\e[1;31mError, wget not found\e[0m"
+# Check if curl & git are installed before continuing
+if ! command -v "curl" &> "/dev/null"; then
+	echo -e "\e[1;31mError, curl not found\e[0m"
 	exit 1
 fi
 
@@ -37,7 +37,7 @@ if ! command -v "java" &> "/dev/null" && [ -z "$JAVA_HOME" ]; then
 		if [ ! -e "openjdk.tar.gz" ]; then
 			echo
 			echo "Downloading openjdk..."
-			wget -q "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
+			curl "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -L -s -o "openjdk.tar.gz"
 		fi
 		echo "Extracting openjdk..."
 		tar xzf "openjdk.tar.gz"
@@ -52,7 +52,7 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
 		if [ ! -e "android-sdk.tar.gz" ]; then
 			echo
 			echo "Downloading Android SDK"
-			wget -q "https://github.com/CnC-Robert/revanced-cli-script/releases/download/androidsdk/android-sdk.tar.gz"
+			curl "https://github.com/CnC-Robert/revanced-cli-script/releases/download/androidsdk/android-sdk.tar.gz" -L -s
 		fi
 		echo "Extracting android-sdk.tar.gz"
 		tar xzf "android-sdk.tar.gz"
