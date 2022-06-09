@@ -2,47 +2,27 @@
 
 DIR="$(pwd)"
 
+# Check if a youtube.apk is provided before continuing
+if [ ! -e "$DIR/build/youtube.apk" ]; then
+	echo
+	echo -e "\e[1;31mError: ./build/youtube.apk not found\e[0m"
+	echo	
+	exit 1
+fi
+
 # Check if curl & git are installed before continuing
 if ! command -v "curl" &> "/dev/null"; then
+	echo	
 	echo -e "\e[1;31mError: curl not found\e[0m"
+	echo
 	exit 1
 fi
 
 if ! command -v "git" &> "/dev/null"; then
-	echo -e "\e[1;31mError: git not found\e[0m"
-	exit 1
-fi
-
-# Check if a youtube.apk is provided before continuing
-if [ ! -e "$DIR/build/youtube.apk" ]; then
-	echo -e "\e[1;31mError: ./build/youtube.apk not found\e[0m"
-	exit 1
-fi
-
-# Check if adb device is connected before continuing
-if [ ! -z "$1" ]; then
-
-	# Check if adb is installed before continuing
-	if ! command -v "adb" &> "/dev/null"; then
-		echo -e "\e[1;31mError: adb not found\e[0m"
-		exit 1
-	fi
-
-	# Check if the adb device is connected
-	if ! adb devices | grep "$1" &> "/dev/null"; then
-		echo -e "\e[1;31mError: device $1 not connected\e[0m"
-		exit 1
-	fi
-
-	# Check if adb has shell & root access
-	if ! adb shell su -c exit; then
-		echo -e "\e[1;31mError: device $1 either has no shell access or root access\e[0m"
-		exit 1
-	fi
-
-else
 	echo
-	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the apk\e[0m"
+	echo -e "\e[1;31mError: git not found\e[0m"
+	echo
+	exit 1
 fi
 
 # Check if java is installed and if not, download and extract openjdk 17
@@ -52,11 +32,18 @@ if ! command -v "java" &> "/dev/null" && [ -z "$JAVA_HOME" ]; then
 		echo
 		if [ ! -e "openjdk.tar.gz" ]; then
 			echo "Downloading openjdk..."
-			curl "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -L -s -o "openjdk.tar.gz"
+			wget -q "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
 		fi
 		echo "Extracting openjdk..."
 		tar xzf "openjdk.tar.gz"
 		mv jdk-* "openjdk"
+	fi
+else
+	if java -version 2>&1 | grep "1.8" &> /dev/null; then
+		echo
+		echo -e "\e[1;31mError: Java 8 is not supported\e[0m"
+		echo
+		exit 1
 	fi
 fi
 
@@ -72,6 +59,38 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
 		echo "Extracting android-sdk.tar.gz"
 		tar xzf "android-sdk.tar.gz"
 	fi
+fi
+
+# Check if adb device is connected before continuing
+if [ ! -z "$1" ]; then
+
+	# Check if adb is installed before continuing
+	if ! command -v "adb" &> "/dev/null"; then
+		echo
+		echo -e "\e[1;31mError: adb not found\e[0m"
+		echo
+		exit 1
+	fi
+
+	# Check if the adb device is connected
+	if ! adb devices | grep "$1" &> "/dev/null"; then
+		echo
+		echo -e "\e[1;31mError: device $1 not connected\e[0m"
+		echo
+		exit 1
+	fi
+
+	# Check if adb has shell & root access
+	if ! adb shell su -c exit; then
+		echo
+		echo -e "\e[1;31mError: device $1 either has no shell access or root access\e[0m"
+		echo
+		exit 1
+	fi
+
+else
+	echo
+	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the apk\e[0m"
 fi
 
 echo
