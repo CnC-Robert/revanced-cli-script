@@ -6,6 +6,7 @@ Bash script that builds & installs revanced automaticlly. Java &amp; Android sdk
  - Compatible YouTube version installed on your phone
  - Username & token set in ~/.gradle/gradle.properties or $GITHUB_TOKEN set with the token
  - Git & curl installed
+ - Zulu or Open JDK 17
  - Java & Android SDK will be downloaded automaticlly if not installed already
 
 # Usage
