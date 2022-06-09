@@ -50,8 +50,8 @@ fi
 if ! command -v "java" &> "/dev/null" && [ -z "$JAVA_HOME" ]; then
 	export JAVA_HOME="$(readlink -f "$DIR/openjdk")"
 	if [ ! -e "$JAVA_HOME/bin/java" ]; then
+		echo
 		if [ ! -e "openjdk.tar.gz" ]; then
-			echo
 			echo "Downloading openjdk..."
 			wget -q "https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz" -O "openjdk.tar.gz"
 		fi
