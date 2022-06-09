@@ -4,31 +4,46 @@ DIR="$(pwd)"
 
 # Check if $GITHUB_TOKEN is set
 if [ -z "$GITHUB_TOKEN" ]; then
-	echo -e "\e[1;31mError, \$GITHUB_TOKEN not set\e[0m"
+	echo -e "\e[1;31mError: \$GITHUB_TOKEN not set\e[0m"
 	exit 1
 fi
 
 # Check if curl is installed before continuing
 if ! command -v "curl" &> "/dev/null"; then
-	echo -e "\e[1;31mError, curl not found\e[0m"
+	echo -e "\e[1;31mError: curl not found\e[0m"
 	exit 1
 fi
 
 # Check if a youtube.apk is provided before continuing
 if [ ! -e "$DIR/build/youtube.apk" ]; then
-	echo -e "\e[1;31mError, ./build/youtube.apk not found\e[0m"
+	echo -e "\e[1;31mError: ./build/youtube.apk not found\e[0m"
 	exit 1
 fi
 
 # Check if adb device is connected before continuing
 if [ ! -z "$1" ]; then
-	if ! adb devices | grep "$1" &> "/dev/null"; then
-		echo -e "\e[1;31mError, device $1 not connected\e[0m"
+
+	# Check if adb is installed before continuing
+	if ! command -v "adb" &> "/dev/null"; then
+		echo -e "\e[1;31mError: adb not found\e[0m"
 		exit 1
 	fi
+
+	# Check if the adb device is connected
+	if ! adb devices | grep "$1" &> "/dev/null"; then
+		echo -e "\e[1;31mError: device $1 not connected\e[0m"
+		exit 1
+	fi
+
+	# Check if adb has shell & root access
+	if ! adb shell su -c exit; then
+		echo -e "\e[1;31mError: device $1 either has no shell access or root access\e[0m"
+		exit 1
+	fi
+
 else
 	echo
-	echo -e "\e[1;33mWarning, no adb device specified. It is recommended to do so to automatically install the apk\e[0m"
+	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the apk\e[0m"
 fi
 
 # Check if java is installed and if not, download and extract openjdk 17
