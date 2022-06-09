@@ -2,11 +2,12 @@
 Bash script that builds & installs revanced automaticlly. Java &amp; Android sdk included. The script also works on windows if you use WSL.
 
 # Requirements
- - A rooted android device
- - Compatible YouTube version installed on your phone
+ - Root for now
+ - Compatible YouTube APK, the same version needs to be installed on your phone
  - Username & token set in ~/.gradle/gradle.properties or $GITHUB_TOKEN set with the token
- - Git & curl installed
- - Zulu or Open JDK 17
+ - Git, curl & adb installed
+ - ZuluJDK 17 or OpenJDK 17
+ - Android SDK
  - Java & Android SDK will be downloaded automaticlly if not installed already
 
 # Usage
