@@ -1,3 +1,5 @@
+If you came here from the ReVanced telegram channel, please know it's fake. Any official links are on their [discord server](https://revanced.app/discord)
+
 # revanced-cli-script
 
 Bash script that builds & installs revanced automaticlly. Java &amp; Android sdk included. The script also works on windows if you use WSL.
