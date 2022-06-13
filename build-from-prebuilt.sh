@@ -40,7 +40,7 @@ if ! command -v "java" &> "/dev/null" && [ -z "$JAVA_HOME" ]; then
 		mv jdk-* "openjdk"
 	fi
 else
-	if java -version 2>&1 | grep "1.8" &> /dev/null; then
+	if java -version 2>&1 | grep "1.8" &> "/dev/null"; then
 		echo
 		echo -e "\e[1;31mError: Java 8 is not supported\e[0m"
 		echo
@@ -77,7 +77,7 @@ if [ ! -z "$1" ]; then
 
 else
 	echo
-	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the apk\e[0m"
+	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install ReVanced\e[0m"
 fi
 
 echo
@@ -106,14 +106,6 @@ PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
 curl "https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patches.jar"
 if [ ! $? == 0 ]; then exit 1; fi
 
-# Get latest patcher version
-PATCHER_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-patcher/releases/latest | grep "tag_name")"
-PATCHER_VERSION="${PATCHER_VERSION:16:-2}"
-
-# Download patcher and check if it downloaded correctly
-curl "https://maven.pkg.github.com/revanced/revanced-patcher/app/revanced/revanced-patcher/$PATCHER_VERSION/revanced-patcher-$PATCHER_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patcher.jar"
-if [ ! $? == 0 ]; then exit 1; fi
-
 cd "$DIR/build"
 
 # Set the correct java executable
@@ -124,7 +116,7 @@ else
 fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp"
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ ! -z "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)  $(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
