@@ -87,7 +87,7 @@ CLI_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-cli/releas
 CLI_VERSION="${CLI_VERSION:16:-2}"
 
 # Download cli and check if it downloaded correctly
-echo curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -s -L -o "$DIR/build/revanced-cli.jar"
+curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -s -L -o "$DIR/build/revanced-cli.jar"
 if [ ! $? == 0 ]; then exit 1; fi
 
 # Get latest integrations version
