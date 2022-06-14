@@ -81,6 +81,8 @@ else
 fi
 
 echo
+echo "Downloading required packages..."
+echo
 
 # Get latest cli version
 CLI_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-cli/releases/latest | grep "tag_name")"
@@ -104,6 +106,9 @@ PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
 if ! curl "https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patches.jar"; then exit 1; fi
 
 cd "$DIR/build"
+
+echo "Executing the CLI..."
+echo
 
 # Set the correct java executable
 if [ -z "$JAVA_HOME" ]; then

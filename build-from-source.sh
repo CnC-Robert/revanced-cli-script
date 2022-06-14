@@ -94,6 +94,8 @@ else
 fi
 
 echo
+echo "Building packages..."
+echo
 
 # Clone the patcher and publish it
 git clone https://github.com/revanced/revanced-patcher
@@ -151,6 +153,10 @@ cp "$DIR/revanced-patches/build/libs/$(ls "$DIR/revanced-patches/build/libs/" | 
 cp "$DIR/revanced-patcher/build/libs/$(ls "$DIR/revanced-patcher/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patcher.jar"
 
 cd "$DIR/build"
+
+echo
+echo "Executing the cli..."
+echo
 
 # Set the correct java executable
 if [ -z "$JAVA_HOME" ]; then
