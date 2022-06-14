@@ -49,7 +49,7 @@ else
 fi
 
 # Check if adb device is connected before continuing
-if [ ! -z "$1" ]; then
+if [ -n "$1" ]; then
 
 	# Check if adb is installed before continuing
 	if ! command -v "adb" &> "/dev/null"; then
@@ -77,7 +77,7 @@ if [ ! -z "$1" ]; then
 
 else
 	echo
-	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install ReVanced\e[0m"
+	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the patched apk\e[0m"
 fi
 
 echo
@@ -87,24 +87,21 @@ CLI_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-cli/releas
 CLI_VERSION="${CLI_VERSION:16:-2}"
 
 # Download cli and check if it downloaded correctly
-curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -s -L -o "$DIR/build/revanced-cli.jar"
-if [ ! $? == 0 ]; then exit 1; fi
+if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -s -L -o "$DIR/build/revanced-cli.jar"; then exit 1; fi
 
 # Get latest integrations version
 INTEGRATIONS_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-integrations/releases/latest | grep "tag_name")"
 INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:15:-2}"
 
 # Download integrations and check if it downloaded correctly
-curl "https://github.com/revanced/revanced-integrations/releases/download/$INTEGRATIONS_VERSION/app-release-unsigned.apk" -s -L -o "$DIR/build/integrations.apk"
-if [ ! $? == 0 ]; then exit 1; fi
+if ! curl "https://github.com/revanced/revanced-integrations/releases/download/$INTEGRATIONS_VERSION/app-release-unsigned.apk" -s -L -o "$DIR/build/integrations.apk"; then exit 1; fi
 
 # Get latest patches version
 PATCHES_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-patches/releases/latest | grep "tag_name")"
 PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
 
 # Download patches and check if it downloaded correctly
-curl "https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patches.jar"
-if [ ! $? == 0 ]; then exit 1; fi
+if ! curl "https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patches.jar"; then exit 1; fi
 
 cd "$DIR/build"
 
@@ -116,7 +113,7 @@ else
 fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ ! -z "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)  $(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" "$(if [ -n "$1" ]; then echo "-d $1"; fi)" -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" "$(if [ -n "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)"  "$(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)"
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 

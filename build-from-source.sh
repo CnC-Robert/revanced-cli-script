@@ -62,7 +62,7 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
 fi
 
 # Check if adb device is connected before continuing
-if [ ! -z "$1" ]; then
+if [ -n "$1" ]; then
 
 	# Check if adb is installed before continuing
 	if ! command -v "adb" &> "/dev/null"; then
@@ -90,75 +90,67 @@ if [ ! -z "$1" ]; then
 
 else
 	echo
-	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install ReVanced\e[0m"
+	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the patched apk\e[0m"
 fi
 
 echo
 
 # Clone the patcher and publish it
 git clone https://github.com/revanced/revanced-patcher
-cd revanced-patcher
-git checkout dev
+cd "revanced-patcher"
+git pull
 chmod +x ./gradlew
 
 # If $LOCALMAVEN is set to 1 use publishToMavenLocal instead of publish
-./gradlew $(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)
+if ! "./gradlew" "$(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)"; then exit 1; fi
 
-# If the program did not build & publish correctly exit the script
-if [ ! $? == 0 ]; then exit 1; fi
-
-cd ..
+cd "$DIR"
 
 echo
 
-# Clone the patches and publish it
+# Clone the patches and build it
 git clone https://github.com/revanced/revanced-patches
-cd revanced-patches
-git checkout dev
-chmod +x ./gradlew
+cd "revanced-patches"
+git pull
+chmod +x "./gradlew"
 
-./gradlew $(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)
+if ! "./gradlew" build; then exit 1; fi
 
-if [ ! $? == 0 ]; then exit 1; fi
-
-cd ..
+cd "$DIR"
 
 echo
 
 # Clone the cli and build it
 git clone https://github.com/revanced/revanced-cli
-cd revanced-cli
-git checkout dev
-chmod +x ./gradlew
+cd "revanced-cli"
+git pull
+chmod +x "./gradlew"
 
-./gradlew build
+if ! ./gradlew build; then exit 1; fi
 
-if [ ! $? == 0 ]; then exit 1; fi
-
-cd ..
+cd "$DIR"
 
 echo
 
 # Clone the integrations and build it
 git clone https://github.com/revanced/revanced-integrations
-cd revanced-integrations
-chmod +x ./gradlew
+cd "revanced-integrations"
+git pull
+chmod +x "./gradlew"
 
-./gradlew build
+if ! "./gradlew" build; then exit 1; fi
 
-if [ ! $? == 0 ]; then exit 1; fi
-
-cd ..
+cd "$DIR"
 
 # Copy the cli, integrations, patches and patcher to the build directory
-cp revanced-cli/build/libs/revanced-cli-*-all.jar build/revanced-cli.jar
-cp revanced-integrations/app/build/outputs/apk/release/*.apk build/integrations.apk
+cp revanced-cli/build/libs/revanced-cli-*-all.jar "$DIR/build/revanced-cli.jar"
+cp "$DIR/revanced-integrations/app/build/outputs/apk/release/app-release-unsigned.apk" "$DIR/build/integrations.apk"
 
 # The cli doesn't need the files that end -sources.jar or -javadoc.jar so don't copy those 
 cp "$DIR/revanced-patches/build/libs/$(ls "$DIR/revanced-patches/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patches.jar"
 cp "$DIR/revanced-patcher/build/libs/$(ls "$DIR/revanced-patcher/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patcher.jar"
 
-cd build
+cd "$DIR/build"
 
 # Set the correct java executable
 if [ -z "$JAVA_HOME" ]; then
@@ -168,7 +160,7 @@ else
 fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ ! -z "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ ! -z "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)  $(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" "$(if [ -n "$1" ]; then echo "-d $1"; fi)" -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" "$(if [ -n "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)"  "$(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)"
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
