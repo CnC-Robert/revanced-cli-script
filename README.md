@@ -7,7 +7,7 @@ Bash script that builds & installs revanced automaticlly. Java &amp; Android sdk
 # Requirements
 
  - Compatible YouTube APK, the same version needs to be installed on your phone
- - Username & token set in ~/.gradle/gradle.properties or $GITHUB_TOKEN set with the token
+ - If you are building from source: Username & token set in ~/.gradle/gradle.properties or $GITHUB_TOKEN set with the token
  - Git, curl & adb installed
  - ZuluJDK 17 or OpenJDK 17
  - Android SDK

@@ -2,14 +2,6 @@
 
 DIR="$(pwd)"
 
-# Check if $GITHUB_TOKEN is set
-if [ -z "$GITHUB_TOKEN" ]; then
-	echo
-	echo -e "\e[1;31mError: \$GITHUB_TOKEN not set\e[0m"
-	echo
-	exit 1
-fi
-
 # Check if a youtube.apk is provided before continuing
 if [ ! -e "$DIR/build/youtube.apk" ]; then
 	echo
@@ -80,30 +72,51 @@ else
 	echo -e "\e[1;33mWarning: no adb device specified. It is recommended to do so to automatically install the patched apk\e[0m"
 fi
 
+# Check $GITHUB_TOKEN if set
+if [ -n "$GITHUB_TOKEN" ]; then
+	if curl "https://api.github.com/rate_limit" -L -s -H "Authorization: token $GITHUB_TOKEN" | grep "Bad credentials" &> "/dev/null"; then
+		echo
+		echo -e "\e[1;31mError: \$GITHUB_TOKEN is not set correctly\e[0m"
+		echo
+		exit 1
+	fi
+fi
+
+# Check if api has reached request limit
+API_LIMIT="$(curl "https://api.github.com/rate_limit" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "remaining" | head -1)"
+API_LIMIT="${API_LIMIT:19:-1}"
+
+if [ "$API_LIMIT" -lt "3" ]; then
+	echo
+	echo -e "\e[1;31mError: Less than 3 Github API request left: $API_LIMIT left. $(if [ -z "$GITHUB_TOKEN" ]; then echo "Set \$GITHUB_TOKEN with a token to get more API requests"; fi)\e[0m"
+	echo
+	exit 1
+fi
+
 echo
 echo "Downloading required packages..."
 echo
 
 # Get latest cli version
-CLI_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-cli/releases/latest | grep "tag_name")"
+CLI_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 CLI_VERSION="${CLI_VERSION:16:-2}"
 
 # Download cli and check if it downloaded correctly
-if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -s -L -o "$DIR/build/revanced-cli.jar"; then exit 1; fi
+if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -L -s -o "$DIR/build/revanced-cli.jar"; then exit 1; fi
 
 # Get latest integrations version
-INTEGRATIONS_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-integrations/releases/latest | grep "tag_name")"
-INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:15:-2}"
+INTEGRATIONS_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
+INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:16:-2}"
 
 # Download integrations and check if it downloaded correctly
-if ! curl "https://github.com/revanced/revanced-integrations/releases/download/$INTEGRATIONS_VERSION/app-release-unsigned.apk" -s -L -o "$DIR/build/integrations.apk"; then exit 1; fi
+if ! curl "https://github.com/revanced/revanced-integrations/releases/download/v$INTEGRATIONS_VERSION/app-release-unsigned.apk" -L -s -o "$DIR/build/integrations.apk"; then exit 1; fi
 
 # Get latest patches version
-PATCHES_VERSION="$(curl -s https://api.github.com/repos/revanced/revanced-patches/releases/latest | grep "tag_name")"
+PATCHES_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
 
 # Download patches and check if it downloaded correctly
-if ! curl "https://maven.pkg.github.com/revanced/revanced-patches/app/revanced/revanced-patches/$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -s -H "Authorization: Bearer $GITHUB_TOKEN" -L -o "$DIR/build/revanced-patches.jar"; then exit 1; fi
+if ! curl "https://github.com/revanced/revanced-patches/releases/download/v$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -L -s -o "$DIR/build/revanced-patches.jar"; then exit 1; fi
 
 cd "$DIR/build"
 
