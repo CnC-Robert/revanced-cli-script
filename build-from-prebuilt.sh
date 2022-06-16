@@ -102,7 +102,7 @@ CLI_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-cli/relea
 CLI_VERSION="${CLI_VERSION:16:-2}"
 
 # Download cli and check if it downloaded correctly
-if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-1.3.0-all.jar" -L -s -o "$DIR/build/revanced-cli.jar"; then exit 1; fi
+if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -L -s -o "$DIR/build/revanced-cli.jar"; then exit 1; fi
 
 # Get latest integrations version
 INTEGRATIONS_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
