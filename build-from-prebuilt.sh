@@ -31,13 +31,21 @@ if ! command -v "java" &> "/dev/null" && [ -z "$JAVA_HOME" ]; then
 		tar xzf "openjdk.tar.gz"
 		mv jdk-* "openjdk"
 	fi
+fi
+
+# Set the correct java executable
+if [ -z "$JAVA_HOME" ]; then
+	JAVA="java"
 else
-	if java -version 2>&1 | grep "1.8" &> "/dev/null"; then
-		echo
-		echo -e "\e[1;31mError: Java 8 is not supported\e[0m"
-		echo
-		exit 1
-	fi
+	JAVA="$JAVA_HOME/bin/java"
+fi
+
+# Check the java version
+if $JAVA -version 2>&1 | grep "1.8" &> "/dev/null"; then
+	echo
+	echo -e "\e[1;31mError: Java 8 is not supported\e[0m"
+	echo
+	exit 1
 fi
 
 # Check if adb device is connected before continuing
@@ -123,15 +131,16 @@ cd "$DIR/build"
 echo "Executing the CLI..."
 echo
 
-# Set the correct java executable
-if [ -z "$JAVA_HOME" ]; then
-	JAVA="java"
-else
-	JAVA="$JAVA_HOME/bin/java"
-fi
+# Get all patches
+for PATCH in $(java -jar revanced-cli.jar -a youtube.apk -o revanced.apk -b revanced-patches.jar -l); do
+	if [ "$PATCH" != "[available]" ]; then
+		PATCHES="$PATCHES -i $PATCH"		
+	fi 
+done
+PATCHES="${PATCHES:1}"
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ -n "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)  $(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ "$ROOT" != "1" ]; then echo "--install"; fi) $(if [ "$ROOT" != "1" ]; then echo "${PATCHES}"; fi)
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 

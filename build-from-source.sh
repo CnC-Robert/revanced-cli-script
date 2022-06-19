@@ -38,13 +38,21 @@ if ! command -v "java" &> "/dev/null" && [ -z "$JAVA_HOME" ]; then
 		tar xzf "openjdk.tar.gz"
 		mv jdk-* "openjdk"
 	fi
+fi
+
+# Set the correct java executable
+if [ -z "$JAVA_HOME" ]; then
+	JAVA="java"
 else
-	if java -version 2>&1 | grep "1.8" &> "/dev/null"; then
-		echo
-		echo -e "\e[1;31mError: Java 8 is not supported\e[0m"
-		echo
-		exit 1
-	fi
+	JAVA="$JAVA_HOME/bin/java"
+fi
+
+# Check the java version
+if $JAVA -version 2>&1 | grep "1.8" &> "/dev/null"; then
+	echo
+	echo -e "\e[1;31mError: Java 8 is not supported\e[0m"
+	echo
+	exit 1
 fi
 
 # Check if android sdk is installed and if not, download and extract android sdk
@@ -98,20 +106,19 @@ echo "Building packages..."
 echo
 
 # Clone the patcher and publish it
-git clone https://github.com/revanced/revanced-patcher
+if [ ! -d "revanced-patcher" ]; then git clone https://github.com/revanced/revanced-patcher; fi
 cd "revanced-patcher"
 git pull
-chmod +x ./gradlew
+chmod +x "./gradlew"
 
-# If $LOCALMAVEN is set to 1 use publishToMavenLocal instead of publish
-if ! "./gradlew" "$(if [ "$LOCALMAVEN" == "1" ]; then echo "publishToMavenLocal"; else echo "publish"; fi)"; then exit 1; fi
+if ! "./gradlew" publishToMavenLocal; then exit 1; fi
 
 cd "$DIR"
 
 echo
 
 # Clone the patches and build it
-git clone https://github.com/revanced/revanced-patches
+if [ ! -d "revanced-patches" ]; then git clone https://github.com/revanced/revanced-patches; fi
 cd "revanced-patches"
 git pull
 chmod +x "./gradlew"
@@ -123,19 +130,19 @@ cd "$DIR"
 echo
 
 # Clone the cli and build it
-git clone https://github.com/revanced/revanced-cli
+if [ ! -d "revanced-cli" ]; then git clone https://github.com/revanced/revanced-cli; fi
 cd "revanced-cli"
 git pull
 chmod +x "./gradlew"
 
-if ! ./gradlew build; then exit 1; fi
+if ! "./gradlew" build; then exit 1; fi
 
 cd "$DIR"
 
 echo
 
 # Clone the integrations and build it
-git clone https://github.com/revanced/revanced-integrations
+if [ ! -d "revanced-integrations" ]; then git clone https://github.com/revanced/revanced-integrations; fi
 cd "revanced-integrations"
 git pull
 chmod +x "./gradlew"
@@ -152,21 +159,22 @@ cp "$DIR/revanced-integrations/app/build/outputs/apk/release/app-release-unsigne
 cp "$DIR/revanced-patches/build/libs/$(ls "$DIR/revanced-patches/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patches.jar"
 cp "$DIR/revanced-patcher/build/libs/$(ls "$DIR/revanced-patcher/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patcher.jar"
 
-cd "$DIR/build"
-
 echo
 echo "Executing the cli..."
 echo
 
-# Set the correct java executable
-if [ -z "$JAVA_HOME" ]; then
-	JAVA="java"
-else
-	JAVA="$JAVA_HOME/bin/java"
-fi
+cd "$DIR/build"
+
+# Get all patches
+for PATCH in $(java -jar revanced-cli.jar -a youtube.apk -o revanced.apk -b revanced-patches.jar -l); do
+	if [ "$PATCH" != "[available]" ]; then
+		PATCHES="$PATCHES -i $PATCH"		
+	fi 
+done
+PATCHES="${PATCHES:1}"
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ -n "$1" ] && [ "$ROOT" != "1" ]; then echo "--install"; fi)  $(if [ "$ROOT" != "1" ]; then echo "-i codecs-unlock -i exclusive-audio-playback -i background-play -i upgrade-button-remover -i tasteBuilder-remover -i seekbar-tapping -i old-quality-layout -i minimized-playback -i disable-create-button -i shorts-button -i amoled -i microg-patch -i general-ads -i video-ads"; fi)
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ "$ROOT" != "1" ]; then echo "--install"; fi) $(if [ "$ROOT" != "1" ]; then echo "${PATCHES}"; fi)
 
 cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
 
