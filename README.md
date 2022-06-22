@@ -15,6 +15,12 @@ Bash script that builds & installs revanced automaticlly. Java &amp; Android sdk
 
 # Usage
 
-By default the script will build the non-root version unless your set $ROOT to 1.
+Variables you can use:
+
+ - `$ROOT` If set to 1 the script will build the root version.
+ - `$EXCLUDED_PATCHES` Set all the patches you want to exclude seperated by a space. So `amoled disable-shorts-button` for example.
+	\
+	The microg patch will be excluded automatically on the root version.
+ - `$LIST` If set to 1 list all the patches and don't start patching.
 
 Place a compatible youtube apk in a folder named build like this: `./build/youtube.apk` and execute the script `./build-from-source.sh "adb device name (optional)"` or `./build-from-prebuilt.sh "adb device name (optional)"`. If an adb device name is given revanced will automaticlly be installed to your phone.

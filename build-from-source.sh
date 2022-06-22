@@ -159,23 +159,37 @@ cp "$DIR/revanced-integrations/app/build/outputs/apk/release/app-release-unsigne
 cp "$DIR/revanced-patches/build/libs/$(ls "$DIR/revanced-patches/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patches.jar"
 cp "$DIR/revanced-patcher/build/libs/$(ls "$DIR/revanced-patcher/build/libs/" | grep -Pv "javadoc|sources")" "$DIR/build/revanced-patcher.jar"
 
-echo
-echo "Executing the cli..."
-echo
-
 cd "$DIR/build"
 
-# Get all patches
-for PATCH in $(java -jar revanced-cli.jar -a youtube.apk -o revanced.apk -b revanced-patches.jar -l); do
-	if [ "$PATCH" != "[available]" ]; then
-		PATCHES="$PATCHES -i $PATCH"		
-	fi 
-done
-PATCHES="${PATCHES:1}"
+echo
+echo "Executing the CLI..."
+echo
+
+# If $LIST is set to 1 list all the patches and dont start patching
+if [ "$LIST" = "1" ]; then
+	"$JAVA" -jar "revanced-cli.jar" -b "revanced-patches.jar" -l
+	exit 0
+fi
+
+if [ -n "$EXCLUDED_PATCHES" ]; then
+	
+	# Get a list of all available patches
+	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -b "revanced-patches.jar" -l)"
+	
+	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
+	for PATCH in $EXCLUDED_PATCHES; do
+		if echo "$PATCHES" | grep "$PATCH" &> "/dev/null"; then
+			EXCLUDE="$EXCLUDE -e $PATCH"
+		fi
+	done
+	
+	EXLUDE="${EXCLUDE:1}"
+	
+fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -m "integrations.apk" -o "revanced.apk" -p "revanced-patches.jar" -t "temp" $(if [ "$ROOT" != "1" ]; then echo "--install"; fi) $(if [ "$ROOT" != "1" ]; then echo "${PATCHES}"; fi)
+"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $(if [ "$ROOT" = "1" ]; then echo "-e microg-support"; fi) $(echo "$EXCLUDE")
 
-cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"
+if [ -e "$DIR/build/revanced.apk" ]; then cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"; fi
 
 exit 0
