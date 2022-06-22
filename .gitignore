@@ -1,6 +1,10 @@
-/build/*
+/build/
+/revanced-cli
+/revanced-integrations
+/revanced-patcher
+/revanced-patches
 /revanced.apk
 /android-sdk.tar.gz
-/android-sdk
+/android-sdk/
 /openjdk.tar.gz
-/openjdk
+/openjdk/
