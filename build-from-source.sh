@@ -88,10 +88,10 @@ if [ -n "$1" ]; then
 		exit 1
 	fi
 
-	# Check if adb has shell & root access
-	if ! adb shell su -c exit; then
+	# Check if adb has root access if $ROOT is set to 1
+	if [[ $ROOT == 1 ]] && ! adb shell su -c exit 2> /dev/null; then		
 		echo
-		echo -e "\e[1;31mError: device $1 either has no shell access or root access\e[0m"
+		echo -e "\e[1;31mError: device $1 has no root access\e[0m"
 		echo
 		exit 1
 	fi
