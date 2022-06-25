@@ -156,6 +156,19 @@ fi
 # Execute the cli and if an adb device name is given deploy on device
 "$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $(if [ "$ROOT" = "1" ]; then echo "-e microg-support"; fi) $(echo "$EXCLUDE")
 
+# Check if you are installing rootless and get and install Vanced microG from github
+if [ -n "$1" ] && [ "$ROOT" != "1" ]; then
+
+	# Skip download if it's already there	
+	if [ ! -e "$DIR/microg.apk" ]; then
+		echo "Downloading Vanced microG"
+		if ! curl "https://github.com/TeamVanced/VancedMicroG/releases/download/v0.2.24.220220-220220001/microg.apk" -L -s -o "$DIR/microg.apk"; then exit 1; fi
+	fi
+	# Install microg	
+	echo "Installing Vanced microG"
+	adb install "$DIR/microg.apk"
+fi
+
 if [ -e "$DIR/build/revanced.apk" ]; then cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"; fi
 
 exit 0
