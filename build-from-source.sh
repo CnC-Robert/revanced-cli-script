@@ -174,7 +174,7 @@ fi
 if [ -n "$EXCLUDED_PATCHES" ]; then
 	
 	# Get a list of all available patches
-	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -b "revanced-patches.jar" -l)"
+	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" -b "revanced-patches.jar" -l)"
 	
 	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
 	for PATCH in $EXCLUDED_PATCHES; do
