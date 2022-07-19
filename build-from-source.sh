@@ -183,7 +183,7 @@ if [ -n "$EXCLUDED_PATCHES" ]; then
 		fi
 	done
 	
-	EXLUDE="${EXCLUDE:1}"
+	EXCLUDE="${EXCLUDE:1}"
 	
 fi
 
