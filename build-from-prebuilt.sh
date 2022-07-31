@@ -2,10 +2,10 @@
 
 DIR="$(pwd)"
 
-# Check if a youtube.apk is provided before continuing
-if [ ! -e "$DIR/build/youtube.apk" ]; then
+# Check if stock.apk exists before continuing
+if [ ! -e "$DIR/build/stock.apk" ]; then
 	echo
-	echo -e "\e[1;31mError: ./build/youtube.apk not found\e[0m"
+	echo -e "\e[1;31mError: ./build/stock.apk not found\e[0m"
 	echo
 	exit 1
 fi
@@ -140,7 +140,7 @@ fi
 if [ -n "$EXCLUDED_PATCHES" ]; then
 	
 	# Get a list of all available patches
-	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" -b "revanced-patches.jar" -l)"
+	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -b "revanced-patches.jar" -l)"
 	
 	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
 	for PATCH in $EXCLUDED_PATCHES; do
@@ -149,25 +149,12 @@ if [ -n "$EXCLUDED_PATCHES" ]; then
 		fi
 	done
 	
-	EXLUDE="${EXCLUDE:1}"
+	EXCLUDE="${EXCLUDE:1}"
 	
 fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "youtube.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $(if [ "$ROOT" = "1" ]; then echo "-e microg-support"; fi) $(echo "$EXCLUDE")
-
-# Check if you are installing rootless and get and install Vanced microG from github
-if [ -n "$1" ] && [ "$ROOT" != "1" ]; then
-
-	# Skip download if it's already there	
-	if [ ! -e "$DIR/microg.apk" ]; then
-		echo "Downloading Vanced microG"
-		if ! curl "https://github.com/TeamVanced/VancedMicroG/releases/download/v0.2.24.220220-220220001/microg.apk" -L -s -o "$DIR/microg.apk"; then exit 1; fi
-	fi
-	# Install microg	
-	echo "Installing Vanced microG"
-	adb install "$DIR/microg.apk"
-fi
+"$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $(echo "$EXCLUDE")
 
 if [ -e "$DIR/build/revanced.apk" ]; then cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"; fi
 

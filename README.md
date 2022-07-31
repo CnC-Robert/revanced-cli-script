@@ -11,19 +11,19 @@ Bash script that builds & installs revanced automaticlly. Java &amp; Android sdk
  - Git, curl & adb installed
  - ZuluJDK 17
  - Android SDK
- - Java & Android SDK will be downloaded automaticlly if not installed already
+ - Java & Android SDK will be downloaded automatically if not installed already
 
 # Usage
 
 Variables you can use:
 
- - `$ROOT` If set to 1 the script will build the root version.
+ - `$ROOT` If set to 1 the script will build the root variant.
  - `$EXCLUDED_PATCHES` Set all the patches you want to exclude seperated by a space. So `amoled disable-shorts-button` for example.
 	\
-	The microg patch will be excluded automatically on the root version.
+	For YouTube or YouTube Music you need to exlude the `microg-support` or `music-microg-patch` when building the root variant.
  - `$LIST` If set to 1 list all the patches and don't start patching.
 
-Place a compatible youtube apk in a folder named build like this: `./build/youtube.apk` and run the script.
+Place a compatible apk in a folder named build like this: `./build/stock.apk` and run the script.
 \
 Optionally you can include an ADB device to automatically install the patched APK.
 
