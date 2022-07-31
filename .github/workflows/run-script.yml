@@ -28,10 +28,8 @@ jobs:
       - name: Download YouTube apk
         run: |
           mkdir "build"
-          cd "build"
-          wget -q "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt-17.19.36/youtube.apk"
-          cd ..
-      
+          wget -q -O "build/stock.apk" "https://www.apkmirror.com/wp-content/uploads/2022/07/32/62dfa68f214a6/com.google.android.youtube_17.29.34-1530648000_minAPI23(arm64-v8a,armeabi-v7a,x86,x86_64)(nodpi)_apkmirror.com.apk?verify=1659294680-qqGYMc7sBPhtUtzc_PEd0JPeJh7KvuFYRB2t0qS58xo"
+
       - name: Execute script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,20 +42,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
- 
+
       - name: Download YouTube apk
         run: |
           mkdir "build"
-          cd "build"
-          wget -q "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt-17.19.36/youtube.apk"
-          cd ..
-      
+          wget -q -O "build/stock.apk" "https://www.apkmirror.com/wp-content/uploads/2022/07/32/62dfa68f214a6/com.google.android.youtube_17.29.34-1530648000_minAPI23(arm64-v8a,armeabi-v7a,x86,x86_64)(nodpi)_apkmirror.com.apk?verify=1659294680-qqGYMc7sBPhtUtzc_PEd0JPeJh7KvuFYRB2t0qS58xo"
+
       - name: Execute script
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
