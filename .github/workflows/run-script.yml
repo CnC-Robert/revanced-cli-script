@@ -28,7 +28,7 @@ jobs:
       - name: Download YouTube apk
         run: |
           mkdir "build"
-          wget -q -O "build/stock.apk" "https://www.apkmirror.com/wp-content/uploads/2022/07/32/62dfa68f214a6/com.google.android.youtube_17.29.34-1530648000_minAPI23(arm64-v8a,armeabi-v7a,x86,x86_64)(nodpi)_apkmirror.com.apk?verify=1659294680-qqGYMc7sBPhtUtzc_PEd0JPeJh7KvuFYRB2t0qS58xo"
+          wget -q -O "build/stock.apk" "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt/youtube.apk"
 
       - name: Execute script
         env:
@@ -52,7 +52,7 @@ jobs:
       - name: Download YouTube apk
         run: |
           mkdir "build"
-          wget -q -O "build/stock.apk" "https://www.apkmirror.com/wp-content/uploads/2022/07/32/62dfa68f214a6/com.google.android.youtube_17.29.34-1530648000_minAPI23(arm64-v8a,armeabi-v7a,x86,x86_64)(nodpi)_apkmirror.com.apk?verify=1659294680-qqGYMc7sBPhtUtzc_PEd0JPeJh7KvuFYRB2t0qS58xo"
+          wget -q -O "build/stock.apk" "https://github.com/CnC-Robert/revanced-cli-script/releases/download/stock-yt/youtube.apk"
 
       - name: Execute script
         env:
