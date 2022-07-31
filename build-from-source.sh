@@ -187,8 +187,24 @@ if [ -n "$EXCLUDED_PATCHES" ]; then
 	
 fi
 
+if [ -n "$INCLUDED_PATCHES" ]; then
+	
+	# Get a list of all available patches
+	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -b "revanced-patches.jar" -l)"
+	
+	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
+	for PATCH in $INCLUDED_PATCHES; do
+		if echo "$PATCHES" | grep "$PATCH" &> "/dev/null"; then
+			INCLUDE="$INCLUDE -i $PATCH"
+		fi
+	done
+	
+	INCLUDE="${INCLUDE:1}"
+	
+fi
+
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $(echo "$EXCLUDE")
+"$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $EXCLUDE $INCLUDE
 
 if [ -e "$DIR/build/revanced.apk" ]; then cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"; fi
 

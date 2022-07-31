@@ -21,6 +21,7 @@ Variables you can use:
  - `$EXCLUDED_PATCHES` Set all the patches you want to exclude seperated by a space. So `amoled disable-shorts-button` for example.
 	\
 	For YouTube or YouTube Music you need to exlude the `microg-support` or `music-microg-patch` when building the root variant.
+ - `$INCLUDED_PATCHES` Same as `$EXCLUDED_PATCHES` but include the patches instead of exclude.
  - `$LIST` If set to 1 list all the patches and don't start patching.
 
 Place a compatible apk in a folder named build like this: `./build/stock.apk` and run the script.
