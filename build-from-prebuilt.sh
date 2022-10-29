@@ -102,32 +102,54 @@ if [ "$API_LIMIT" -lt "3" ]; then
 fi
 
 echo
-echo "Downloading packages..."
+echo "Checking required packages..."
 echo
 
 # Get latest cli version
 CLI_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 CLI_VERSION="${CLI_VERSION:16:-2}"
 
-# Check whether latest cli version exist in local. If it is not, download cli and check if it downloaded correctly
-if ! test -f "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar" && ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -L -s --create-dirs -o "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar"; then exit 1; fi
+# Check whether latest cli version exist in local. Skip if present.
+if [ -f "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar" ]; then
+	echo "revanced-cli-$CLI_VERSION.jar exists locally. Skipping download..."
+
+# Download cli and check if downloaded correctly
+else
+	echo "Downloading cli-$CLI_VERSION.jar"
+    if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -L -s --create-dirs -o "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar"; then exit 1; fi
+fi
 
 # Get latest integrations version
 INTEGRATIONS_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:16:-2}"
 
-# Check whether latest integrations version exist in local. If it is not, download integrations and check if it downloaded correctly
-if ! test -f "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk" && ! curl "https://github.com/revanced/revanced-integrations/releases/download/v$INTEGRATIONS_VERSION/app-release-unsigned.apk" -L -s --create-dirs -o "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk"; then exit 1; fi
+# Check whether latest integrations version exist in local. Skip if present.
+if [ -f "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk" ]; then
+	echo "integrations-$INTEGRATIONS_VERSION.apk exists locally. Skipping download..."
+
+# Download integrations and check if downloaded correctly
+else
+	echo "Downloading integrations-$INTEGRATIONS_VERSION.apk"
+    if ! curl "https://github.com/revanced/revanced-integrations/releases/download/v$INTEGRATIONS_VERSION/app-release-unsigned.apk" -L -s --create-dirs -o "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk"; then exit 1; fi
+fi
 
 # Get latest patches version
 PATCHES_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
 
-# Check whether latest patches version exist in local. If it is not, download patches and check if it downloaded correctly
-if ! test -f "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar" && ! curl "https://github.com/revanced/revanced-patches/releases/download/v$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -L -s --create-dirs -o "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar"; then exit 1; fi
+# Check whether latest patches version exist in local. Skip if present.
+if [ -f "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar" ]; then
+	echo "revanced-patches-$PATCHES_VERSION.jar exists locally. Skipping download..."
+
+# Download patches and check if downloaded correctly
+else
+	echo "Downloading revanced-patches-$PATCHES_VERSION.jar"
+    if ! curl "https://github.com/revanced/revanced-patches/releases/download/v$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -L -s --create-dirs -o "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar"; then exit 1; fi
+fi
 
 cd "$DIR/build"
 
+echo
 echo "Executing the CLI..."
 echo
 
