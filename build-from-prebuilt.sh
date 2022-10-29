@@ -109,22 +109,22 @@ echo
 CLI_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 CLI_VERSION="${CLI_VERSION:16:-2}"
 
-# Download cli and check if it downloaded correctly
-if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -L -s -o "$DIR/build/revanced-cli.jar"; then exit 1; fi
+# Check whether latest cli version exist in local. If it is not, download cli and check if it downloaded correctly
+if ! test -f "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar" && ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -L -s --create-dirs -o "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar"; then exit 1; fi
 
 # Get latest integrations version
 INTEGRATIONS_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:16:-2}"
 
-# Download integrations and check if it downloaded correctly
-if ! curl "https://github.com/revanced/revanced-integrations/releases/download/v$INTEGRATIONS_VERSION/app-release-unsigned.apk" -L -s -o "$DIR/build/integrations.apk"; then exit 1; fi
+# Check whether latest integrations version exist in local. If it is not, download integrations and check if it downloaded correctly
+if ! test -f "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk" && ! curl "https://github.com/revanced/revanced-integrations/releases/download/v$INTEGRATIONS_VERSION/app-release-unsigned.apk" -L -s --create-dirs -o "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk"; then exit 1; fi
 
 # Get latest patches version
 PATCHES_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
 PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
 
-# Download patches and check if it downloaded correctly
-if ! curl "https://github.com/revanced/revanced-patches/releases/download/v$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -L -s -o "$DIR/build/revanced-patches.jar"; then exit 1; fi
+# Check whether latest patches version exist in local. If it is not, download patches and check if it downloaded correctly
+if ! test -f "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar" && ! curl "https://github.com/revanced/revanced-patches/releases/download/v$PATCHES_VERSION/revanced-patches-$PATCHES_VERSION.jar" -L -s --create-dirs -o "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar"; then exit 1; fi
 
 cd "$DIR/build"
 
@@ -133,14 +133,14 @@ echo
 
 # If $LIST is set to 1 list all the patches and dont start patching
 if [ "$LIST" = "1" ]; then
-	"$JAVA" -jar "revanced-cli.jar" -b "revanced-patches.jar" -l
+	"$JAVA" -jar "./cli/revanced-cli-$CLI_VERSION.jar" -b "./patches/revanced-patches-$PATCHES_VERSION.jar" -l
 	exit 0
 fi
 
 if [ -n "$EXCLUDED_PATCHES" ]; then
 	
 	# Get a list of all available patches
-	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -b "revanced-patches.jar" -l)"
+	PATCHES="$("$JAVA" -jar "./cli/revanced-cli-$CLI_VERSION.jar" -a "stock.apk" -b "./patches/revanced-patches-$PATCHES_VERSION.jar" -l)"
 	
 	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
 	for PATCH in $EXCLUDED_PATCHES; do
@@ -156,7 +156,7 @@ fi
 if [ -n "$INCLUDED_PATCHES" ]; then
 	
 	# Get a list of all available patches
-	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -b "revanced-patches.jar" -l)"
+	PATCHES="$("$JAVA" -jar "./cli/revanced-cli-$CLI_VERSION.jar" -a "stock.apk" -b "./patches/revanced-patches-$PATCHES_VERSION.jar" -l)"
 	
 	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
 	for PATCH in $INCLUDED_PATCHES; do
@@ -170,7 +170,7 @@ if [ -n "$INCLUDED_PATCHES" ]; then
 fi
 
 # Execute the cli and if an adb device name is given deploy on device
-"$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -o "revanced.apk" -b "revanced-patches.jar" -m "integrations.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $EXCLUDE $INCLUDE
+"$JAVA" -jar "./cli/revanced-cli-$CLI_VERSION.jar" -a "stock.apk" -o "revanced.apk" -b "./patches/revanced-patches-$PATCHES_VERSION.jar" -m "./integrations/integrations-$INTEGRATIONS_VERSION.apk" $(if [ -n "$1" ]; then echo "-d $1"; fi) -t "temp" $(if [ "$ROOT" = "1" ]; then echo "--mount"; fi) $EXCLUDE $INCLUDE
 
 if [ -e "$DIR/build/revanced.apk" ]; then cp "$DIR/build/revanced.apk" "$DIR/revanced.apk"; fi
 
