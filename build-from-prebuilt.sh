@@ -105,9 +105,11 @@ echo
 echo "Checking required packages..."
 echo
 
-# Get latest cli version
-CLI_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
-CLI_VERSION="${CLI_VERSION:16:-2}"
+# Get latest cli version. Skip if set previously.
+if [ -z "$CLI_VERSION" ]; then
+	CLI_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-cli/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
+	CLI_VERSION="${CLI_VERSION:16:-2}"
+fi
 
 # Check whether latest cli version exist in local. Skip if present.
 if [ -f "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar" ]; then
@@ -119,9 +121,11 @@ else
     if ! curl "https://github.com/revanced/revanced-cli/releases/download/v$CLI_VERSION/revanced-cli-$CLI_VERSION-all.jar" -L -s --create-dirs -o "$DIR/build/cli/revanced-cli-$CLI_VERSION.jar"; then exit 1; fi
 fi
 
-# Get latest integrations version
-INTEGRATIONS_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
-INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:16:-2}"
+# Get latest integrations version. Skip if set previously.
+if [ -z "$INTEGRATIONS_VERSION" ]; then
+	INTEGRATIONS_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-integrations/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
+	INTEGRATIONS_VERSION="${INTEGRATIONS_VERSION:16:-2}"
+fi
 
 # Check whether latest integrations version exist in local. Skip if present.
 if [ -f "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk" ]; then
@@ -133,9 +137,11 @@ else
     if ! curl "https://github.com/revanced/revanced-integrations/releases/download/v$INTEGRATIONS_VERSION/app-release-unsigned.apk" -L -s --create-dirs -o "$DIR/build/integrations/integrations-$INTEGRATIONS_VERSION.apk"; then exit 1; fi
 fi
 
-# Get latest patches version
-PATCHES_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
-PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
+# Get latest patches version. Skip if set previously.
+if [ -z "$PATCHES_VERSION" ]; then
+	PATCHES_VERSION="$(curl -s "https://api.github.com/repos/revanced/revanced-patches/releases/latest" -L -s $(if [ -z "$GITHUB_TOKEN" ]; then echo -H "Authorization: token $GITHUB_TOKEN" ;fi) | grep "tag_name")"
+	PATCHES_VERSION="${PATCHES_VERSION:16:-2}"
+fi
 
 # Check whether latest patches version exist in local. Skip if present.
 if [ -f "$DIR/build/patches/revanced-patches-$PATCHES_VERSION.jar" ]; then
