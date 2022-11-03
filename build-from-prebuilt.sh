@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DIR="$(pwd)"
 
 # Check if stock.apk exists before continuing
