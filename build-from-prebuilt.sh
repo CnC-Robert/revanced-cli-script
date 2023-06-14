@@ -158,7 +158,7 @@ if [ -n "$INCLUDED_PATCHES" ]; then
 	# Get a list of all available patches
 	PATCHES="$("$JAVA" -jar "revanced-cli.jar" -a "stock.apk" -b "revanced-patches.jar" -l)"
 	
-	# Check if every patch in $EXCLUDED_PATCHES is a valid patch and add it to patches to exclude
+	# Check if every patch in $INCLUDED_PATCHES is a valid patch and add it to patches to include
 	for PATCH in $INCLUDED_PATCHES; do
 		if echo "$PATCHES" | grep "$PATCH" &> "/dev/null"; then
 			INCLUDE="$INCLUDE -i $PATCH"
